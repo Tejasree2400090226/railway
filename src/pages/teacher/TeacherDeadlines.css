@@ -1,0 +1,89 @@
+.teacher-page {
+  padding: 30px;
+}
+
+/* TITLE */
+.page-title {
+  margin-bottom: 20px;
+}
+
+/* FORM */
+.deadline-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.deadline-form input,
+.deadline-form select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.deadline-form input {
+  flex: 1;
+  min-width: 180px;
+}
+
+.deadline-form button {
+  padding: 10px 16px;
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.deadline-form button:hover {
+  background: #2563eb;
+}
+
+/* LIST */
+.deadline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* CARD */
+.deadline-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* PRIORITY COLORS */
+.priority {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.priority.high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.priority.medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.priority.low {
+  background: #dcfce7;
+  color: #166534;
+}
+/* MILESTONE BADGE */
+.milestone-badge {
+  background: #e0e7ff;
+  color: #1e3a8a;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+}
