@@ -129,10 +129,22 @@ if (!result.ok) {
   return;
 }
 
+// Extract verification code from message if present (for testing with fallback)
+const messageText = result.message || "";
+const codeMatch = messageText.match(/Code:\s*(\d{6})/);
+let displayCode = "";
+
+if (codeMatch && codeMatch[1]) {
+  displayCode = codeMatch[1];
+  // Auto-fill the code input for testing
+  setTypedCode(displayCode);
+  setMessage(`✅ Verification code: ${displayCode} (auto-filled for testing)`);
+} else {
+  setMessage(result.message || "Verification code sent to your email.");
+}
+
 setCodeSent(true);
 setEmailVerified(false);
-setTypedCode("");
-setMessage(result.message || "Verification code sent to your email.");
 };
 
 const handleVerifyCode = async () => {
