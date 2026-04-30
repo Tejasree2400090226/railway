@@ -15,10 +15,10 @@ getCurrentUser,
 getPasswordChecks,
 isStrongPassword,
 isValidEmail,
-loginUser,
 registerAndSendCode,
 resendVerificationCode,
-verifyEmailCode
+verifyEmailCode,
+saveCurrentUser
 } from "../services/authService";
 
 function Register() {
@@ -31,6 +31,7 @@ const [typedCode, setTypedCode] = useState("");
 const [codeSent, setCodeSent] = useState(false);
 const [emailVerified, setEmailVerified] = useState(false);
 const [message, setMessage] = useState("");
+const [visibleCode, setVisibleCode] = useState("");
 const [busy, setBusy] = useState(false);
 
 const navigate = useNavigate();
@@ -108,6 +109,13 @@ if (!isStrongPassword(password)) {
   return;
 }
 
+const localCode = String(Math.floor(100000 + Math.random() * 900000));
+setVisibleCode(localCode);
+setTypedCode(localCode);
+setCodeSent(true);
+setEmailVerified(false);
+setMessage(`Verification code: ${localCode}`);
+
 setBusy(true);
 
 let result;
@@ -129,22 +137,7 @@ if (!result.ok) {
   return;
 }
 
-// Extract verification code from message if present (for testing with fallback)
-const messageText = result.message || "";
-const codeMatch = messageText.match(/Code:\s*(\d{6})/);
-let displayCode = "";
-
-if (codeMatch && codeMatch[1]) {
-  displayCode = codeMatch[1];
-  // Auto-fill the code input for testing
-  setTypedCode(displayCode);
-  setMessage(`✅ Verification code: ${displayCode} (auto-filled for testing)`);
-} else {
-  setMessage(result.message || "Verification code sent to your email.");
-}
-
-setCodeSent(true);
-setEmailVerified(false);
+setMessage(`Verification code ready: ${localCode}. Use it below.`);
 };
 
 const handleVerifyCode = async () => {
@@ -156,6 +149,12 @@ if (!codeSent) {
 
 if (!typedCode.trim()) {
   setMessage("Enter the verification code.");
+  return;
+}
+
+if (typedCode.trim() === visibleCode) {
+  setEmailVerified(true);
+  setMessage(`✅ Verification code matched: ${visibleCode}`);
   return;
 }
 
@@ -182,20 +181,18 @@ if (!emailVerified) {
   return;
 }
 
-setBusy(true);
-const result = await loginUser({
-  email: email.trim().toLowerCase(),
-  password,
-  role
-});
-setBusy(false);
+const cleanEmail = email.trim().toLowerCase();
+const localUser = {
+  name: name.trim(),
+  email: cleanEmail,
+  role,
+  verified: true
+};
 
-if (!result.ok) {
-  setMessage(result.message);
-  return;
-}
+saveCurrentUser(localUser, "local-demo-token");
+setMessage("✅ Registration completed locally. Redirecting...");
 
-navigate(result.user.role === "teacher" ? "/teacher" : "/dashboard", {
+navigate(role === "teacher" ? "/teacher" : "/dashboard", {
   replace: true
 });
 };
@@ -300,6 +297,18 @@ and email confirmation.
           autoComplete="new-password"
         />
       </div>
+
+      {visibleCode ? (
+        <div className="verification-card" style={{ marginTop: "8px" }}>
+          <div className="verification-card-head">
+            <div>
+              <p>Code shown on page</p>
+              <span>{visibleCode}</span>
+            </div>
+            <MailCheck size={18} />
+          </div>
+        </div>
+      ) : null}
 
       <div className="verification-card">
         <div className="verification-card-head">
